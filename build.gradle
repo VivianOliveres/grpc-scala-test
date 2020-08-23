@@ -1,0 +1,78 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.13'
+    }
+}
+
+plugins {
+    id 'com.google.protobuf' version '0.8.13'
+    id 'scala'
+}
+
+ext {
+    scalapbVersion = '0.9.1' // Can not found 0.10.8 version
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    // Use Scala 2.12 in our library project
+    implementation 'org.scala-lang:scala-library:2.13.2'
+
+    compile "com.thesamet.scalapb:scalapb-runtime_2.13:${scalapbVersion}"
+
+    // Use Scalatest for testing our library
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.scalatest:scalatest_2.13:3.2.2'
+
+    // Need scala-xml at test runtime
+    testRuntimeOnly 'org.scala-lang.modules:scala-xml_2.13:1.1.1'
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.11.4'
+    }
+    plugins {
+        scalapb {
+            artifact = (org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem().isWindows()) ?
+                    "com.thesamet.scalapb:protoc-gen-scalapb:${scalapbVersion}:windows@bat" :
+                    "com.thesamet.scalapb:protoc-gen-scalapb:${scalapbVersion}:unix@sh"
+        }
+    }
+
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                remove java
+            }
+            task.plugins {
+                scalapb {
+                    // add any ScalaPB generator options here. See: https://scalapb.github.io/scalapbc.html#passing-generator-parameters
+                    // option 'flat_package'
+                }
+            }
+        }
+    }
+}
+
+task run(type: JavaExec, dependsOn: classes) {
+    main = 'com.kensai.grpc.greeting.MainGreetingServer'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+}
+
+// Add geneated Scala code as a source directory
+sourceSets {
+    main {
+        scala {
+            srcDirs "${protobuf.generatedFilesBaseDir}/main/scalapb"
+        }
+    }
+}

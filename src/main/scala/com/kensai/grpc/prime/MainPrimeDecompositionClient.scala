@@ -20,11 +20,11 @@ object MainPrimeDecompositionClient {
     ask(blockingStub, 15)
 
     // Expect to throw IllegalArgumentException
-//    try {
-//      ask(blockingStub, -1)
-//    } catch {
-//      case e: StatusRuntimeException => e.printStackTrace()
-//    }
+    try {
+      ask(blockingStub, -1)
+    } catch {
+      case e: StatusRuntimeException => e.printStackTrace()
+    }
   }
 
   private def ask(blockingStub: PrimeDecompositionServiceBlockingStub, value: Int) = {

@@ -27,3 +27,10 @@ In this streaming client use case, client send multiple messages (containing a l
 then server respond with the average of all numbers received.
 
 For instance, if client send 1, 2 and 3, then server should respond 2.0.
+
+## Max computing scenario
+
+In this bi directional streaming use case, client send multiple messages (containing a long value) and 
+then server respond only when this value is the max that it received.
+
+For instance, if client send 1, 3 and 2, then server should respond 1 and 3.

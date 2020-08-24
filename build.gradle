@@ -1,19 +1,12 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.13'
-    }
-}
-
 plugins {
-    id 'com.google.protobuf' version '0.8.13'
+    id 'com.charlesahunt.scalapb' version '1.3.0'
     id 'scala'
+    id 'idea'
 }
 
 ext {
-    scalapbVersion = '0.9.1' // Can not found 0.10.8 version
+    scalapbVersion = '0.9.7' // Compilation errors with gRPC and 10+ version
+    grpcVersion = '1.31.1'
 }
 
 repositories {
@@ -22,12 +15,17 @@ repositories {
 }
 
 dependencies {
-    // Use Scala 2.12 in our library project
+    // Scala 2.13
     implementation 'org.scala-lang:scala-library:2.13.2'
 
-    compile "com.thesamet.scalapb:scalapb-runtime_2.13:${scalapbVersion}"
+    // gRPC
+    compile group: 'io.grpc', name: 'grpc-netty', version: "${grpcVersion}"
 
-    // Use Scalatest for testing our library
+    // ScalaPB
+    compile "com.thesamet.scalapb:scalapb-runtime_2.13:${scalapbVersion}"
+    compile "com.thesamet.scalapb:scalapb-runtime-grpc_2.13:$scalapbVersion"
+
+    // Testing
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.scalatest:scalatest_2.13:3.2.2'
 
@@ -35,44 +33,21 @@ dependencies {
     testRuntimeOnly 'org.scala-lang.modules:scala-xml_2.13:1.1.1'
 }
 
-protobuf {
-    protoc {
-        artifact = 'com.google.protobuf:protoc:3.11.4'
-    }
-    plugins {
-        scalapb {
-            artifact = (org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem().isWindows()) ?
-                    "com.thesamet.scalapb:protoc-gen-scalapb:${scalapbVersion}:windows@bat" :
-                    "com.thesamet.scalapb:protoc-gen-scalapb:${scalapbVersion}:unix@sh"
-        }
-    }
-
-    generateProtoTasks {
-        all().each { task ->
-            task.builtins {
-                remove java
-            }
-            task.plugins {
-                scalapb {
-                    // add any ScalaPB generator options here. See: https://scalapb.github.io/scalapbc.html#passing-generator-parameters
-                    // option 'flat_package'
-                }
-            }
-        }
-    }
-}
-
-task run(type: JavaExec, dependsOn: classes) {
-    main = 'com.kensai.grpc.greeting.MainGreetingServer'
-    classpath sourceSets.main.runtimeClasspath
-    classpath configurations.runtime
-}
-
-// Add geneated Scala code as a source directory
+// Add generated Scala code as a source directory
 sourceSets {
     main {
         scala {
-            srcDirs "${protobuf.generatedFilesBaseDir}/main/scalapb"
+            srcDirs = ['src/main/scala', 'target/scala/managed']
         }
     }
+}
+
+scalapbConfig {
+    projectProtoSourceDir = "src/main/proto"
+    targetDir = "target/scala/managed"
+    embeddedProtoc = true
+}
+
+compileScala {
+    dependsOn scalapb
 }

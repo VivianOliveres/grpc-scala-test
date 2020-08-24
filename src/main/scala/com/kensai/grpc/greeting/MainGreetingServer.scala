@@ -1,5 +1,6 @@
 package com.kensai.grpc.greeting
 
+import com.kensai.grpc._
 import com.kensai.grpc.proto.greeting._
 import io.grpc.{Server, ServerBuilder}
 

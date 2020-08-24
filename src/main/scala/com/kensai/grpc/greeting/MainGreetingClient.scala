@@ -1,5 +1,7 @@
 package com.kensai.grpc.greeting
 
+import com.kensai.grpc._
+import com.kensai.grpc.proto.greeting.GreetingServiceGrpc.GreetingServiceBlockingStub
 import com.kensai.grpc.proto.greeting.{GreetingRequest, GreetingServiceGrpc, Person}
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 
@@ -12,30 +14,28 @@ object MainGreetingClient {
       .usePlaintext // To replace with SSL
       .build
 
-    askGreeting(channel)
-    askAnonymousGreeting(channel)
+    val blockingStub = GreetingServiceGrpc.blockingStub(channel)
+
+    askGreeting(blockingStub)
+    askAnonymousGreeting(blockingStub)
   }
 
-  def askGreeting(channel: ManagedChannel): Unit = {
+  private def askGreeting(blockingStub: GreetingServiceBlockingStub): Unit = {
     println(s"Sending GreetingRequest(Vivian, Oliveres)")
     val request = GreetingRequest(Some(Person("Vivian", "Oliveres")))
 
-    val blockingStub = GreetingServiceGrpc.blockingStub(channel)
     val response = blockingStub.greet(request)
-
     println(s"Response received: $response")
   }
 
   /**
    * Should throw a StatusRuntimeException
    */
-  def askAnonymousGreeting(channel: ManagedChannel): Unit = {
+  private def askAnonymousGreeting(blockingStub: GreetingServiceBlockingStub): Unit = {
     println(s"Sending GreetingRequest(None)")
     val request = GreetingRequest(None)
 
-    val blockingStub = GreetingServiceGrpc.blockingStub(channel)
     val response = blockingStub.greet(request)
-
     println(s"Response received: $response")
   }
 

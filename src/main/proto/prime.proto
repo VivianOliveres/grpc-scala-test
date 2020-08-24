@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+
+package prime;
+
+option java_package = "com.kensai.grpc.proto";
+option java_multiple_files = true;
+
+message PrimeDecompositionRequest {
+  int32 value  = 1;
+}
+
+message PrimeDecompositionResponse {
+  int32 prime_number = 1;
+}
+
+service PrimeDecompositionService {
+  rpc Decompose(PrimeDecompositionRequest) returns (stream PrimeDecompositionResponse) {};
+}

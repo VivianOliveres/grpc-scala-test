@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+
+package average;
+
+option java_package = "com.kensai.grpc.proto";
+option java_multiple_files = true;
+
+message AverageRequest {
+  int32 value  = 1;
+}
+
+message AverageResponse {
+  double average = 1;
+}
+
+service AverageService {
+  rpc ComputeAverage(stream AverageRequest) returns (AverageResponse) {};
+}

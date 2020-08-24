@@ -20,3 +20,10 @@ then server respond with all prime numbers that compose this value.
 
 For instance, if client send 15, then server should respond 3 and then 5 (because 3x5=15 
 and 3 and 5 are prime numbers).
+
+## Average computing scenario
+
+In this streaming client use case, client send multiple messages (containing a long value) and 
+then server respond with the average of all numbers received.
+
+For instance, if client send 1, 2 and 3, then server should respond 2.0.

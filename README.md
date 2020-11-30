@@ -1,3 +1,5 @@
+![Scala CI](https://github.com/VivianOliveres/grpc-scala-test/workflows/Scala%20CI/badge.svg?branch=master)
+
 # gRPC Scala Test
 
 This project aims to implement basic scenarios with gRpc.

@@ -1,6 +1,9 @@
 # From https://github.com/github/gitignore/blob/master/Gradle.gitignore
 /build/
 
+# Ignore .gradle folder
+.gradle/
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
@@ -10,10 +13,8 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
-# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
-# gradle/wrapper/gradle-wrapper.properties
-
-
+# target folder
+target/
 
 # From https://github.com/github/gitignore/blob/master/Java.gitignore
 *.class
@@ -35,6 +36,7 @@ hs_err_pid*
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff:
+.idea/
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
